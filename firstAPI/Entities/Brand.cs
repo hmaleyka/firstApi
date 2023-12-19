@@ -1,9 +1,11 @@
-﻿namespace firstAPI.Entities
+﻿using firstAPI.Entities.Base;
+
+namespace firstAPI.Entities
 {
-    public class Brand
+    public class Brand : BaseEntity
     {
 
-        public int Id { get; set; }
+        
         public string brandName { get; set; }
         public List<Car> brands { get;set; }
 
