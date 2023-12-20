@@ -2,6 +2,7 @@
 using firstAPI.DTOs.CategoryDtos;
 using firstAPI.Entities;
 using firstAPI.Repositories.Interfaces;
+using firstAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,29 +14,30 @@ namespace firstAPI.Controllers
     public class BrandsController : ControllerBase
     {
    
-        private readonly IRepository<Brand> _repository;
+        private readonly IBrandRepository _repository;
+        private readonly IBrandService _service;
 
-        public BrandsController( IRepository<Brand> repository)
+        public BrandsController(IBrandRepository repository, IBrandService service)
         {
          
             _repository = repository;
+            _service = service;
         }
 
-        [HttpGet]
-    
+        [HttpGet]    
         public async Task<IActionResult> GetAll()
         {
-            var brands = await _repository.GetAll();
+            var brands = await _service.GetAll();
 
             return StatusCode(StatusCodes.Status200OK, brands);
         }
 
-        [HttpGet]
-        [Route("{id}")]
+        [HttpGet("{id}")]
+       
         public async Task<IActionResult> GetById(int id)
         {
-            var brands = await _repository.GetByIdAsync(id);
-            if (brands == null) return StatusCode(StatusCodes.Status404NotFound);
+            var brands = await _service.GetById(id);
+
             return StatusCode(StatusCodes.Status200OK, brands);
         }
 

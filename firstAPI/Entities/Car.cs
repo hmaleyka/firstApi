@@ -1,8 +1,10 @@
-﻿namespace firstAPI.Entities
+﻿using firstAPI.Entities.Base;
+
+namespace firstAPI.Entities
 {
-    public class Car
+    public class Car: BaseEntity
     {
-        public int Id { get; set; }
+      
         public string Name { get; set; }
         public DateTime ModelYear { get; set; }
         public string Description { get; set; }

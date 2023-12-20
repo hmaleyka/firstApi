@@ -19,7 +19,10 @@ namespace firstAPI.Repositories.Implementations
 
        
 
-        public async Task<IQueryable<T>> GetAll(Expression<Func<T, bool>>? expression = null, params string[] includes)
+        public async Task<IQueryable<T>> GetAll(Expression<Func<T, bool>>? expression = null,
+            Expression<Func<T, object >>? OrderByExpression = null,
+            bool isDescending=false
+            ,params string[] includes)
         {
             IQueryable<T> query =  _dbcontext.Set<T>();
 
@@ -31,6 +34,11 @@ namespace firstAPI.Repositories.Implementations
                 }
             }
 
+            if(OrderByExpression !=null)
+            {
+                query = isDescending ? query.OrderByDescending(OrderByExpression) : query.OrderBy(OrderByExpression);
+            }
+
             if(expression is not null)
             {
                 query = query.Where(expression);
@@ -40,9 +48,9 @@ namespace firstAPI.Repositories.Implementations
             return query;
         }
 
-        public async Task<Brand> GetByIdAsync(int id)
+        public async Task<T> GetByIdAsync(int id)
         {
-           return await _dbcontext.brands.AsNoTracking().FirstOrDefaultAsync(b=>b.Id==id);
+           return await _dbcontext.Set<T>().AsNoTracking().FirstOrDefaultAsync(b=>b.Id==id);
         }
 
         public async Task Create(T entity)
@@ -65,14 +73,14 @@ namespace firstAPI.Repositories.Implementations
             await _dbcontext.SaveChangesAsync();
         }
 
-        Task<IQueryable<T>> IRepository<T>.GetAll(Expression<Func<T, bool>>? expression, params string[] includes)
-        {
-            throw new NotImplementedException();
-        }
+        //Task<IQueryable<T>> IRepository<T> .GetAll(Expression<Func<T, bool>>? expression, params string[] includes)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        Task<T> IRepository<T>.GetByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
+        //Task<T> IRepository<T>.GetByIdAsync(int id)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

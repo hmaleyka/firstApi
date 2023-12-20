@@ -1,5 +1,6 @@
 ﻿using firstAPI.DAL;
 using firstAPI.Entities;
+using firstAPI.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,35 +12,45 @@ namespace firstAPI.Controllers
     public class CarsController : ControllerBase
     {
 
-        private AppDbContext _dbcontext;
+      
+        private readonly IRepository<Car> _repository;
 
-        public CarsController(AppDbContext dbcontext)
+        public CarsController( IRepository<Car> repository)
         {
-            _dbcontext = dbcontext;
+           
+            _repository = repository;
         }
-
-        [HttpGet]
-        [Route("{id}")]
-        public async Task<IActionResult> Get()
+       
+        [HttpGet]    
+        public async Task<IActionResult> GetAll()
         {
-            List<Car> cars = await _dbcontext.cars.Include(c=>c.brand).Include(c=>c.color).ToListAsync();
+            var cars = await _repository.GetAll();
 
             return StatusCode(StatusCodes.Status200OK, cars);
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(int id)
+        [Route("{id}")]
+        public async Task<IActionResult> GetById(int id)
         {
-            var cars = await _dbcontext.cars.FirstOrDefaultAsync(c=>c.Id==id);
+            var cars = await _repository.GetByIdAsync(id);
             if (cars == null) return StatusCode(StatusCodes.Status404NotFound);
             return StatusCode(StatusCodes.Status200OK, cars);
         }
 
         [HttpPost] 
-        public async Task<IActionResult> Create(Car car)
+        public async Task<IActionResult> Create([FromForm] Car car)
         {
-            await _dbcontext.cars.AddAsync(car);
-            await _dbcontext.SaveChangesAsync();
+            Car cars = new Car()
+            {
+                color = car.color,
+                brand = car.brand,
+                Name = car.Name
+                
+
+            };
+            await _repository.Create(car);
+            await _repository.SaveChangesAsync();
 
             return StatusCode(StatusCodes.Status200OK, car);
         }
@@ -48,22 +59,23 @@ namespace firstAPI.Controllers
         {
             if (id <= 0) return StatusCode(StatusCodes.Status400BadRequest);
 
-            var cars = await _dbcontext.cars.FirstOrDefaultAsync(c=>c.Id==id);
+            var cars = await _repository.GetByIdAsync(id);
 
             if (cars == null) return StatusCode(StatusCodes.Status404NotFound);
 
             cars.Name= name;
             cars.Description= description;
             cars.ModelYear = time;
-            await _dbcontext.SaveChangesAsync();
+            _repository.Update(cars);
+            await _repository.SaveChangesAsync();
             return StatusCode(StatusCodes.Status200OK, cars);
         }
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            var cars = _dbcontext.cars.FirstOrDefault(c => c.Id == id);
-            _dbcontext.cars.Remove(cars);
-            await _dbcontext.SaveChangesAsync();
+            var cars = _repository.GetByIdAsync(id);
+            //await _repository.DeleteAsync(cars);
+            await _repository.SaveChangesAsync();
             return StatusCode(StatusCodes.Status200OK, cars);
 
         }
