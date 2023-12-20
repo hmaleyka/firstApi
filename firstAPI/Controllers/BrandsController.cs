@@ -1,11 +1,4 @@
 ﻿using firstAPI.DAL;
-using firstAPI.DTOs.CategoryDtos;
-using firstAPI.Entities;
-using firstAPI.Repositories.Interfaces;
-using firstAPI.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace firstAPI.Controllers
 {
@@ -44,14 +37,9 @@ namespace firstAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromForm]CreateBrandDto brandDto)
         {
-            Brand brand = new Brand()
-            {
-                brandName = brandDto.Name,
-            };
-            await _repository.Create(brand);
-         await _repository.SaveChangesAsync();
+            var brand =  await  _service.Create(brandDto);
 
-            return StatusCode(StatusCodes.Status200OK, brand);
+            return StatusCode(StatusCodes.Status201Created, brand);
         }
         [HttpPut]
         public async Task<IActionResult> Update(int id, string name)

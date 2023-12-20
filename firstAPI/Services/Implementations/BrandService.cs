@@ -1,7 +1,4 @@
-﻿using firstAPI.DTOs.CategoryDtos;
-using firstAPI.Entities;
-using firstAPI.Repositories.Interfaces;
-using firstAPI.Services.Interfaces;
+﻿
 
 namespace firstAPI.Services.Implementations
 {
@@ -14,9 +11,17 @@ namespace firstAPI.Services.Implementations
             _repository = repository;
         }
 
-        public Task Create(CreateBrandDto createBrandDto)
+        public async Task<Brand> Create(CreateBrandDto createBrandDto)
         {
-            if (createBrandDto == null) throw new Exception();
+            if (createBrandDto == null) throw new Exception("Not Null");
+
+            Brand brand = new Brand()
+            {
+                brandName = createBrandDto.Name,
+            };
+            await  _repository.Create(brand);
+            await _repository.SaveChangesAsync();
+            return brand;
         }
 
         public async Task<IQueryable<Brand>> GetAll()

@@ -1,10 +1,4 @@
-﻿using firstAPI.DAL;
-using firstAPI.Entities;
-using firstAPI.Repositories.Interfaces;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-
+﻿
 namespace firstAPI.Controllers
 {
     [Route("api/[controller]")]
@@ -14,17 +8,19 @@ namespace firstAPI.Controllers
 
       
         private readonly IRepository<Car> _repository;
+        private readonly ICarService _service;
 
-        public CarsController( IRepository<Car> repository)
+        public CarsController( IRepository<Car> repository, ICarService service)
         {
            
             _repository = repository;
+            _service = service;
         }
        
         [HttpGet]    
         public async Task<IActionResult> GetAll()
         {
-            var cars = await _repository.GetAll();
+            var cars = await _service.GetAll();
 
             return StatusCode(StatusCodes.Status200OK, cars);
         }
@@ -33,23 +29,16 @@ namespace firstAPI.Controllers
         [Route("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var cars = await _repository.GetByIdAsync(id);
-            if (cars == null) return StatusCode(StatusCodes.Status404NotFound);
+            var cars = await _service.GetById(id);  
+        
             return StatusCode(StatusCodes.Status200OK, cars);
         }
 
         [HttpPost] 
-        public async Task<IActionResult> Create([FromForm] Car car)
+        public async Task<IActionResult> Create([FromForm] CreateCarDto createCarDto)
         {
-            Car cars = new Car()
-            {
-                color = car.color,
-                brand = car.brand,
-                Name = car.Name
-                
-
-            };
-            await _repository.Create(car);
+        
+            var car = await _service.Create(createCarDto);
             await _repository.SaveChangesAsync();
 
             return StatusCode(StatusCodes.Status200OK, car);

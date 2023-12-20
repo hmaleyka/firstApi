@@ -9,6 +9,6 @@ namespace firstAPI.Services.Interfaces
         Task<IQueryable<Brand>> GetAll();
         Task<Brand> GetById(int id);
 
-        Task Create(CreateBrandDto createBrandDto);
+        Task <Brand> Create(CreateBrandDto createBrandDto);
     }
 }
