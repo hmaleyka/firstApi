@@ -1,5 +1,4 @@
-﻿using firstAPI.DTOs.CategoryDtos;
-using firstAPI.Entities;
+﻿
 
 namespace firstAPI.Services.Interfaces
 {
@@ -10,5 +9,8 @@ namespace firstAPI.Services.Interfaces
         Task<Brand> GetById(int id);
 
         Task <Brand> Create(CreateBrandDto createBrandDto);
+        Task<Brand> Update(int id, UpdateBrandDto updatebranddto);
+
+        Task<Brand> Delete(int id);
     }
 }

@@ -1,4 +1,5 @@
-﻿using firstAPI.DTOs.BrandDtos;
+﻿
+using firstAPI.DTOs.CarDtos;
 using firstAPI.Entities;
 
 namespace firstAPI.Services.Interfaces

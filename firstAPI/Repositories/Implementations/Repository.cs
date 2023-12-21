@@ -73,14 +73,6 @@ namespace firstAPI.Repositories.Implementations
             await _dbcontext.SaveChangesAsync();
         }
 
-        //Task<IQueryable<T>> IRepository<T> .GetAll(Expression<Func<T, bool>>? expression, params string[] includes)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //Task<T> IRepository<T>.GetByIdAsync(int id)
-        //{
-        //    throw new NotImplementedException();
-        //}
+     
     }
 }

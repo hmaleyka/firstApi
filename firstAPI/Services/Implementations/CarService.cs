@@ -1,4 +1,5 @@
 ﻿
+using AutoMapper;
 using firstAPI.DTOs.CarDtos;
 using firstAPI.Entities;
 using firstAPI.Repositories.Interfaces;
@@ -10,34 +11,28 @@ namespace firstAPI.Services.Implementations
     public class CarService : ICarService
     {
         private readonly ICarRepository _repository;
+        private readonly IMapper _mapper;
 
-        public CarService(ICarRepository repository)
+        public CarService(ICarRepository repository , IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
 
-        public Task<Car> Create(CreateCarDto createCarDto)
+        public async Task<Car> Create(CreateCarDto createCarDto)
         {
             if (createCarDto == null) throw new Exception("Not Null");
-            Car cars = new Car()
-            {
-                Name = createCarDto.Name,
-                Description = createCarDto.Description,
-                ModelYear = createCarDto.ModelYear,
-                DailyPrice = createCarDto.Dailyprice,
-                ColorID = createCarDto.ColorId,
-                BrandId = createCarDto.BrandId,
-
-            };
-            await _repository.Create(cars);
+           
+            Car newcar = _mapper.Map<Car>(createCarDto);
+            await _repository.Create(newcar);
             await _repository.SaveChangesAsync();
-            return cars;
+            return newcar;
         }
 
         public async Task<IQueryable<Car>> GetAll()
         {
-           return await _repository.GetAll();
+           return await _repository.GetAll(OrderByExpression: c => c.ModelYear, isDescending: true);
         }
 
         public async Task<Car> GetById(int id)

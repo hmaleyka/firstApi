@@ -42,26 +42,16 @@ namespace firstAPI.Controllers
             return StatusCode(StatusCodes.Status201Created, brand);
         }
         [HttpPut]
-        public async Task<IActionResult> Update(int id, string name)
+        public async Task<IActionResult> Update(int id, [FromForm] UpdateBrandDto updateBrandDto)
         {
-            if (id <= 0) return StatusCode(StatusCodes.Status400BadRequest);
-
-            var brands = await _repository.GetByIdAsync(id);
-
-            if (brands == null) return StatusCode(StatusCodes.Status404NotFound);
-
-            brands.brandName = name;
-            _repository.Update(brands);
-            await _repository.SaveChangesAsync();
+            var brands = await _service.Update(id, updateBrandDto);
             return StatusCode(StatusCodes.Status200OK, brands);
         }
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            var brands = _repository.GetByIdAsync(id);
-            //await _repository.Remove(brands);
-            await _repository.SaveChangesAsync();
-            return StatusCode(StatusCodes.Status200OK, brands);
+            await _service.Delete(id);
+            return StatusCode(StatusCodes.Status200OK);
 
         }
     }
